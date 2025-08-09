@@ -5,7 +5,7 @@
 from aiogram import Dispatcher
 import asyncio
 
-from setting import settings, bot
+from setting import bot
 from models import init_db
 from user import user_router
 from admin import admin_router

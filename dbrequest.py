@@ -3,11 +3,12 @@
 Содержит декоратор подключения к сессии и CRUD-операции.
 """
 
-from typing import Any, Awaitable, Callable, Dict, Optional
+from typing import Any, Awaitable, Callable, Optional
 
 from models import async_session
 from models import User
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 
 
 def connection(func: Callable[..., Awaitable[Any]]) -> Callable[..., Awaitable[Any]]:
@@ -23,29 +24,25 @@ def connection(func: Callable[..., Awaitable[Any]]) -> Callable[..., Awaitable[A
 
 
 @connection
-async def select_users(session) -> Dict[int, int]:
+async def create_user(session, user_id: int, message_thread_id: int) -> bool:
     """
-    Возвращает словарь user_id -> message_thread_id для всех пользователей.
+    Создаёт нового пользователя с указанной темой.
+    Возвращает True, если запись создана, False — если уже существовала.
     """
-    result = await session.execute(select(User.user_id, User.message_thread_id))
-    users = result.all()
-    return {user.user_id: user.message_thread_id for user in users}
-
-
-@connection
-async def create_user(session, user_id: int, message_thread_id: int) -> None:
-    """
-    Создаёт нового пользователя с указанной темой и статусом не заблокирован.
-    """
-    new_user = User(user_id=user_id, message_thread_id=message_thread_id, is_blocked=False)
+    new_user = User(user_id=user_id, message_thread_id=message_thread_id)
     session.add(new_user)
-    await session.commit()
+    try:
+        await session.commit()
+        return True
+    except IntegrityError:
+        await session.rollback()
+        return False
 
 
 @connection
-async def get_user_id_from_message_thread_id(session, message_thread_id: int) -> Optional[int]:
+async def get_user_id_by_message_thread_id(session, message_thread_id: int) -> Optional[int]:
     """
-    Возвращает user_id по идентификатору темы сообщения.
+    Возвращает user_id по иmessage_thread_id.
     """
     result = await session.execute(
         select(User.user_id).where(User.message_thread_id == message_thread_id)
@@ -55,26 +52,12 @@ async def get_user_id_from_message_thread_id(session, message_thread_id: int) ->
 
 
 @connection
-async def update_user(session, user_id: int, is_blocked: bool) -> None:
+async def get_thread_id_by_user_id(session, user_id: int) -> Optional[int]:
     """
-    Обновляет флаг блокировки пользователя.
+    Возвращает message_thread_id по user_id.
     """
-    result = await session.execute(select(User).where(User.user_id == user_id))
-    user = result.scalars().first()
-
-    if user:
-        user.is_blocked = is_blocked
-        await session.commit()
-
-
-@connection
-async def update_user_thread_id(session, user_id: int, message_thread_id: int) -> None:
-    """
-    Обновляет идентификатор темы (message_thread_id) для пользователя.
-    """
-    result = await session.execute(select(User).where(User.user_id == user_id))
-    user = result.scalars().first()
-
-    if user:
-        user.message_thread_id = message_thread_id
-        await session.commit()
+    result = await session.execute(
+        select(User.message_thread_id).where(User.user_id == user_id)
+    )
+    thread_id = result.scalars().first()
+    return thread_id

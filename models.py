@@ -1,8 +1,9 @@
 """
 Модели и настройки SQLAlchemy для бота поддержки.
+Хранится одна запись на пользователя (`user_id` уникален), содержащая `message_thread_id` темы.
 """
 
-from sqlalchemy import Integer, Boolean
+from sqlalchemy import Integer
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase
 from sqlalchemy.ext.asyncio import (
     AsyncAttrs,
@@ -33,15 +34,14 @@ class Base(AsyncAttrs, DeclarativeBase):
 class User(Base):
     """
     Модель пользователя.
-    Связывает `user_id` Telegram с `message_thread_id` и флагом блокировки.
+    Связывает `user_id` Telegram с `message_thread_id`.
     """
 
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(Integer)
+    user_id: Mapped[int] = mapped_column(Integer, unique=True)
     message_thread_id: Mapped[int] = mapped_column(Integer)
-    is_blocked: Mapped[bool] = mapped_column(Boolean)
 
 
 async def init_db() -> None:
