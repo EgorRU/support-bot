@@ -1,21 +1,32 @@
-from aiogram import Bot, Dispatcher
+"""
+Точка входа приложения: инициализация БД и запуск бота.
+"""
+
+from aiogram import Dispatcher
 import asyncio
 
-from config import TOKEN
-from models import create_db
+from setting import settings, bot
+from models import init_db
 from user import user_router
 from admin import admin_router
 
 
-bot = Bot(TOKEN)
-dp = Dispatcher()
+async def main() -> None:
+    """
+    Основная функция для запуска бота.
+    """
+    # Создание бд
+    await init_db()
 
+    # Инициализация диспетчера
+    dispatcher = Dispatcher()
 
-async def main():
-    await create_db()
-    dp.include_router(user_router)
-    dp.include_router(admin_router)
-    await dp.start_polling(bot)
+    # Подключение роутеров
+    dispatcher.include_router(user_router)
+    dispatcher.include_router(admin_router)
+
+    # Запуск бота
+    await dispatcher.start_polling(bot)
 
 
 if __name__ == "__main__":

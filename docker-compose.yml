@@ -1,0 +1,10 @@
+﻿version: '3.8'
+
+services:
+  bot:
+    build: .
+    container_name: support-bot
+    env_file:
+      - .env
+    command: python main.py
+    restart: unless-stopped
