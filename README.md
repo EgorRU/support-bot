@@ -31,37 +31,67 @@
 ### Windows
 
 #### Требования
-- Python 3.10+ (см. сайт Python)
-- Git (см. сайт Git)
+- Python 3.10+
+- Git
 
 #### Шаги
 
-1. Установите зависимости:
+1. Клонируйте репозиторий и перейдите в папку проекта:
+   ```powershell
+   git clone https://github.com/EgorRU/support-bot.git
+   cd support-bot
+   ```
+2. Создайте и активируйте виртуальное окружение:
+   ```powershell
+   python -m venv venv
+   .\venv\Scripts\Activate.ps1
+   ```
+3. Установите зависимости:
    ```powershell
    python -m pip install -r requirements.txt
    ```
-2. Создайте файл `.env` в корне проекта и заполните значениями:
+4. Создайте файл окружения и заполните значения:
+   ```powershell
+   copy env_example.txt .env
+   ```
+   Откройте `.env` и укажите параметры:
    ```env
    BOT_TOKEN=ВАШ_ТОКЕН_БОТА
    GROUP_ID=-1001234567890
    ```
-3. Запустите бота:
+   Важно: перед ID группы обязательно должен быть префикс -100.
+5. Запустите бота:
    ```powershell
    python main.py
    ```
 
 ### Linux/macOS
 
-1. Установите зависимости:
+1. Клонируйте репозиторий и перейдите в папку проекта:
+   ```bash
+   git clone https://github.com/EgorRU/support-bot.git
+   cd support-bot
+   ```
+2. Создайте и активируйте виртуальное окружение:
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+3. Установите зависимости:
    ```bash
    python3 -m pip install -r requirements.txt
    ```
-2. Создайте и заполните `.env`:
+4. Создайте файл окружения и заполните значения:
+   ```bash
+   cp env_example.txt .env
+   ```
+   Отредактируйте `.env`:
    ```env
    BOT_TOKEN=ВАШ_ТОКЕН_БОТА
    GROUP_ID=-1001234567890
    ```
-3. Запустите бота:
+   Важно: перед ID группы обязательно должен быть префикс -100.
+5. Запустите бота:
    ```bash
    python3 main.py
    ```
