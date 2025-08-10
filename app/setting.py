@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     # Настройки бота
     BOT_TOKEN: str
     GROUP_ID: int
+    
+    # Настройки базы данных
+    DATABASE_URL: str = "sqlite+aiosqlite:///database.db"
 
     class Config(SettingsConfigDict):
         env_file = ".env"
