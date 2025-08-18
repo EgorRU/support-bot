@@ -28,5 +28,5 @@ Documentation = "https://github.com/EgorRU/support-bot#readme"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["app*"]
+include = ["src*"]
 exclude = ["venv*"]

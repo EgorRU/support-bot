@@ -67,7 +67,7 @@ DATABASE_URL=sqlite+aiosqlite:///database.db
 
 ### Запуск
 ```bash
-python app/main.py
+python src/main.py
 ```
 
 ### Альтернативные способы запуска
@@ -110,7 +110,7 @@ docker-compose up -d
 ```
 support-bot/
 ├── app/
-│   ├── main.py          # Точка входа (python app/main.py)
+│   ├── main.py          # Точка входа (python src/main.py)
 │   ├── user.py          # Обработчики пользователя (ЛС → тема)
 │   ├── admin.py         # Обработчики группы (тема → ЛС)
 │   ├── dbrequest.py     # Доступ к БД (CRUD), контекст сессии
